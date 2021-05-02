@@ -1,0 +1,3 @@
+X: net migration
+Y: Development index
+R: Conflict score
