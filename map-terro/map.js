@@ -115,9 +115,12 @@ var map = new Datamap({
 				.style("left", (d3.event.pageX) + "px")     
 				.style("top", (d3.event.pageY) + "px");
         })
-        .on('click', function(geography) {
-            alert(geography.properties.name);
-        });
+//        .on('click', function(geography) {
+//            alert(geography.properties.name);
+//        })
+        .on('mouseleave', function(geography) {
+            d3.select("#tooltip").transition().duration(200).style('opacity', 0);
+        })
     },
 })
 
