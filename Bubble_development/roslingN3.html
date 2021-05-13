@@ -130,7 +130,7 @@
 			
                 <div class="legend" style="display: table;" >
 					<div class="blank" style="display: table-row; ">
-						Legend 
+						Yearly evolution in net migration scores 
 						<br>
 					</div>
 					
@@ -283,13 +283,13 @@
                 // Create an x-axis connected to the x scale
                 xAxis = d3.axisBottom()
                     .scale(xScale)
-                    .ticks(7, d3.format(",d"))
-					.tickSize(-svg_height, 0, 0);;
+                    .ticks(2, d3.format(",d"))
+					.tickSize(0, 0, 0);;
 					
 				//Label for x axis	
                 svg.append("text")
                     .attr("x", svg_width / 2.5 + margin.left)
-                    .attr("y", svg_height + margin.bottom - 3)
+                    .attr("y", svg_height/0 + margin.bottom - 3)
                     .style("text-anchor", "middle")
                     .attr("font-family", "Arial, Helvetica, sans-serif")
                     .text("Net migration score")
@@ -297,8 +297,8 @@
 				// Create an y-axis connected to the y scale
                 yAxis = d3.axisLeft()
                     .scale(yScale)
-                    .ticks(10)
-					.tickSize(-790, 0, 0);;
+                    .ticks(1)
+					.tickSize(10, 0, 0);;
 					
                 //label for Y axis
                 svg.append("text")
@@ -310,14 +310,16 @@
                     .attr("font-family", "Arial, Helvetica, sans-serif")
                     .style("text-anchor", "middle")
                     .text("Development level");
+
                 //bringing x axis to bottom position
                 svg.append("g")
                     .attr("class", "axis")
-                    .attr("transform", "translate(0," + svg_height + ")")
+                    .attr("transform", "translate(0)")
                     .call(xAxis);
                 //calling y axis
                 svg.append("g")
                     .attr("class", "axis")
+                    .attr("transform", "translate(10,20)")
                     .call(yAxis);
 				//displaying year in the background of bubble chart
                 svg.append("text")
