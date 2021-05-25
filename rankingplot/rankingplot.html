@@ -16,6 +16,13 @@
 </head>
 
 <body>
+            <div class="heading-text no-margin no-padding text-center">
+                <h2 class="text-medium-light">Parallel Coordinates Plot<br/></h2>
+                <span class="lead">This plot demonstrates the relation between countries, their GDP, the net
+                migration numbers and the total number of terrorist events. <br/> <b>We see that countries with a median
+                        GDP have more terrorist events than other countries.</b> Hover over a line to see countries
+                of the same region.</span>
+            </div>
     <center>
         <!-- Create a div where the graph will take place -->
         <div id="my_dataviz"></div>
@@ -24,14 +31,14 @@
     <style>
     .axis .title {
       font-size: 14px;
-      transform: rotate(-21deg) translate(-5px,-6px);
+      transform: rotate(-13deg) translate(-5px,-6px);
       fill: #222;
     }
     .axis line,
     .axis path {
       fill: none;
       stroke: #cccccc;
-      stroke-width: 1px;
+      stroke-width: 3px;
     }
     .axis .tick text {
       fill: #222;
@@ -81,9 +88,9 @@
 
     // set the dimensions and margins of the graph
     // values set correctly for a 15" macbook screen, assuming this page is loaded as an iframe.
-    var margin = {top: 100, right: 0, bottom: 10, left: 0},
-      width = 1100 - margin.left - margin.right,
-      height = 500 - margin.top - margin.bottom;
+    var margin = {top: 70, right: 0, bottom: 10, left: 0},
+      width = 1500 - margin.left - margin.right,
+      height = 820 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
     var svg = d3.select("#my_dataviz")
@@ -161,31 +168,32 @@
       // Highlight the country that is hovered
       var highlight = function(d){
         selected_region = d.Region
-        console.log("Highlight", selected_region)
         // tooltip.transition().duration(200)
         tooltip.style("visibility", "visible");
-        tooltip.text(d.Country)
+        tooltip.style("stroke", "#b9b7bd");
+        tooltip.text(d.Country + " (" + d.Region + ")");
 
         // first every group turns grey
         d3.selectAll(".line")
           .transition().duration(200)
           .style("stroke", "#b9b7bd")
+          .style("stroke-width", "4px")
           .style("opacity", "0.2")
         // Second the hovered specie takes its color
         d3.selectAll("." + selected_region)
           .transition().duration(250)
           .style("stroke", color(selected_region))
+          .style("stroke-width", "4px")
           .style("opacity", "1")
       }
 
       // Unhighlight
       var doNotHighlight = function(d){
-        console.log("doNotHighlight", selected_region)
         tooltip.transition().duration(250)
         tooltip.style("visibility", "hidden");
         d3.selectAll(".line")
           .transition().duration(250)
-          .style("stroke", "#868b8e")  // function(d){ return( color(d.Country))} )
+          .style("stroke", "#dddddd")  // function(d){ return( color(d.Country))} )
           .style("opacity", "1")
       }
 
@@ -205,11 +213,12 @@
             .attr("class", function (d) { return "line " + d.Region } )
             .style("fill", "none")
             .style("stroke", "#868b8e")
+            .style("stroke-width", "4px")
             .style("opacity", 0.3)
             .on("mouseover", highlight)
             .on("mouseleave", doNotHighlight )
             .on("mousemove", function() {
-                return tooltip.style("top", (event.pageY-15)+"px").style("left",(event.pageX)+"px");
+                return tooltip.style("top", (event.pageY-18)+"px").style("left",(event.pageX+5)+"px");
             })
 
       // Draw the axis:
@@ -223,7 +232,7 @@
         .attr("transform", function(d) { return "translate(" + x(d.key) + ")"; })
 
         // And I build the axis with the call function
-        .each(function(d) { d3.select(this).call(d3.axisLeft().ticks(10).scale(d.scale)); })
+        .each(function(d) { d3.select(this).call(d3.axisLeft().scale(y[d.key])); })
 
         // Add axis title
         .append("text")
