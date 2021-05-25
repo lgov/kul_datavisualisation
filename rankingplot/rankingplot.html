@@ -1,0 +1,240 @@
+
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Load d3.js -->
+    <script src="https://d3js.org/d3.v4.js"></script>
+
+    <!-- Stylesheets & Fonts -->
+    <link href="../assets/css/font-google.css" rel="stylesheet">
+    <link href="../css/plugins.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/responsive.css" rel="stylesheet">
+</head>
+
+<body>
+    <center>
+        <!-- Create a div where the graph will take place -->
+        <div id="my_dataviz"></div>
+    </center>
+    <!-- A bit of style -->
+    <style>
+    .axis .title {
+      font-size: 14px;
+      transform: rotate(-21deg) translate(-5px,-6px);
+      fill: #222;
+    }
+    .axis line,
+    .axis path {
+      fill: none;
+      stroke: #cccccc;
+      stroke-width: 1px;
+    }
+    .axis .tick text {
+      fill: #222;
+      pointer-events: none;
+    }
+
+    .axis.pl_facility .tick text,
+    .axis.pl_instrument .tick text,
+    .axis.st_spstr .tick text {
+      font-size: 6px;
+    }
+
+    .axis.pl_telescope .tick text {
+      font-size: 5px;
+    }
+
+    .axis:hover line,
+    .axis:hover path,
+    .axis.active line,
+    .axis.active path {
+      fill: none;
+      stroke: #868b8e;
+      stroke-width: 1px;
+    }
+
+    .axis:hover .title {
+      font-weight: bold;
+    }
+
+    .axis:hover .tick text {
+      opacity: 1;
+    }
+
+    .axis.active .title {
+      font-weight: bold;
+    }
+
+    .axis.active .tick text {
+      opacity: 1;
+      font-weight: bold;
+    }
+    </style>
+
+    <script>
+
+
+
+    // set the dimensions and margins of the graph
+    // values set correctly for a 15" macbook screen, assuming this page is loaded as an iframe.
+    var margin = {top: 100, right: 0, bottom: 10, left: 0},
+      width = 1100 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    var dimensions = [
+      {
+        key: "Country",
+        description: "Country",
+        scale: d3.scalePoint().range([0, height])
+      },
+      {
+        key: "GDP",
+        description: "GDP (in million $)",
+        scale: d3.scalePoint().range([0, height])
+      },
+      {
+        key: "Average_netmigr",
+        description: "Average Net Migration",
+        scale: d3.scalePoint().range([0, height])
+      },
+      {
+        key: "Total_terro_events",
+        description: "Total number of terrorist events",
+        scale: d3.scalePoint().range([0, height])
+      }
+    ]
+
+    // Parse the Data
+    d3.csv("ranking_plot.csv", function(data) {
+
+      countries = []
+      for (row of data) {
+        countries.push(row['Country'])
+      }
+
+      // For each dimension, I build a linear scale. I store all in a y object
+      var y = {}
+      for (d of dimensions) {
+        name = d.key
+        if (name=='Country') {
+            y[name] = d3.scalePoint()
+            .domain(countries)
+            .range([0, height])
+        } else {
+            y[name] = d3.scaleLinear()
+              .domain( d3.extent(data, function(d) { return +d[name]; }) )
+              .range([height, 0])
+        }
+      }
+
+      // Build the X scale -> it find the best position for each Y axis
+      x = d3.scalePoint()
+        .range([0, width])
+        .padding(1)
+        .domain(Object.keys(data[0]));
+
+      // Color scale: give me a specie name, I return a color
+      var color = d3.scaleOrdinal()
+        .domain(["NORTHERN AMERICA", "ASIA", "EUROPE", "LATIN AMER. & CARIB", "OCEANIA", "NEAR EAST", "AFRICA", "C.W. OCoun IND. STATES"])
+        .range([ "#0c1446", "#87aca3", "#2b7c85", "#175873", "#ff4500", "#b7ac44", "#ff8300", "#a16ae8"])
+
+      // create a tooltip
+      var tooltip = d3.select("#my_dataviz")
+        .append("div")
+          .style("position", "absolute")
+          .style("visibility", "hidden")
+          .text("");
+
+      // Highlight the country that is hovered
+      var highlight = function(d){
+        selected_region = d.Region
+        console.log("Highlight", selected_region)
+        // tooltip.transition().duration(200)
+        tooltip.style("visibility", "visible");
+        tooltip.text(d.Country)
+
+        // first every group turns grey
+        d3.selectAll(".line")
+          .transition().duration(200)
+          .style("stroke", "#b9b7bd")
+          .style("opacity", "0.2")
+        // Second the hovered specie takes its color
+        d3.selectAll("." + selected_region)
+          .transition().duration(250)
+          .style("stroke", color(selected_region))
+          .style("opacity", "1")
+      }
+
+      // Unhighlight
+      var doNotHighlight = function(d){
+        console.log("doNotHighlight", selected_region)
+        tooltip.transition().duration(250)
+        tooltip.style("visibility", "hidden");
+        d3.selectAll(".line")
+          .transition().duration(250)
+          .style("stroke", "#868b8e")  // function(d){ return( color(d.Country))} )
+          .style("opacity", "1")
+      }
+
+      // The path function take a row of the csv as input, and return x and y coordinates of the line to draw for this row.
+      function path(row) {
+          // if (dim.key == "Country") {return [0,0]} else { return [x(dim.key), y[dim.key](row[dim.key])]; }
+          line =  d3.line()(dimensions.map(function(dim) { return [x(dim.key), y[dim.key](row[dim.key])]; }));
+          return line
+      }
+
+      // Draw the lines
+      svg
+        .selectAll("myPath")
+        .data(data)
+        .enter().append("path")
+            .attr("d",  path)
+            .attr("class", function (d) { return "line " + d.Region } )
+            .style("fill", "none")
+            .style("stroke", "#868b8e")
+            .style("opacity", 0.3)
+            .on("mouseover", highlight)
+            .on("mouseleave", doNotHighlight )
+            .on("mousemove", function() {
+                return tooltip.style("top", (event.pageY-15)+"px").style("left",(event.pageX)+"px");
+            })
+
+      // Draw the axis:
+      svg.selectAll("myAxis")
+        // For each dimension of the dataset I add a 'g' element:
+        .data(dimensions).enter()
+        .append("g")
+        .attr("class", "axis")
+
+        // I translate this element to its right position on the x axis
+        .attr("transform", function(d) { return "translate(" + x(d.key) + ")"; })
+
+        // And I build the axis with the call function
+        .each(function(d) { d3.select(this).call(d3.axisLeft().ticks(10).scale(d.scale)); })
+
+        // Add axis title
+        .append("text")
+          .style("text-anchor", "middle")
+          .attr("y", -9)
+          .attr("class", "title")
+          .text(function(d) { return d.description; })
+          .style("fill", "black")
+
+    })
+
+
+    </script>
+</body>
