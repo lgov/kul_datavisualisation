@@ -1,0 +1,127 @@
+body {
+  overflow: hidden;
+  margin: 0;
+  font-size: 14px;
+  font-family: "Helvetica Neue", Helvetica;
+}
+
+.row {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+#worldmap {
+  position: relative;
+  height: 100%;
+  margin-top: -300px;
+}
+
+.axis text {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 8px;
+  line-height: 1.42857143;
+  color: #333;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.charts {
+  padding: 10px;
+  border: 1px solid #222;
+}
+
+
+#tooltip {
+  position: absolute;
+  text-align: center;
+  padding: 20px;
+  margin: 10px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 1px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+#tooltip h4 {
+  margin: 0;
+  font-size: 14px;
+}
+#tooltip {
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid grey;
+  border-radius: 5px;
+  font-size: 12px;
+  width: auto;
+  padding: 4px;
+  color: white;
+  opacity: 0;
+  z-index: 10;
+}
+#tooltip table {
+  table-layout: fixed;
+}
+#tooltip tr td {
+  padding: 0;
+  margin: 0;
+}
+#tooltip tr td:nth-child(1) {
+  width: 100px;
+}
+#tooltip tr td:nth-child(2) {
+  text-align: center;
+}
+
+.legend-box {
+  height: 120px;
+  width: 200px;
+}
+
+.legend-group > label {
+  display: block;
+}
+
+.legend-btns {
+  display: inline-flex; 
+  align-items: center;
+}
+
+.left-bar {
+  margin-top: 10px;
+  padding-left: 0 !important;
+}
+#chart {
+  margin-top: 20px;
+}
+
+.btn {
+  outline: none !important;
+  width: 100px;
+}
+
+.legends {
+  margin-top: 10px;
+  border: 1px solid black;
+  padding: 5px;
+}
+
+.legends > p {
+  font-size: 16px;
+  font-weight: 700 !important;
+  text-align: center;
+}
+
+.legends > label {
+  font-weight: 400 !important;
+}
